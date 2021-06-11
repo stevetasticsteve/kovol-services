@@ -3,5 +3,14 @@
 {% block content %}
 
 <h1>Index page</h1>
+<ul>
+    <li>
+        <a href="{{url_for('phonemics') }}">Phonemics</a>
+    </li>
+    <li>
+        <a href="{{url_for('verb_prediction') }}">Verb prediction</a>
+    </li>
+</ul>
+
 
 {% endblock %}
