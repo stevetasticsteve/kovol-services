@@ -1,0 +1,9 @@
+venv
+.vscode
+LICENSE
+README.md
+to-do.md
+.gitignore
+.git
+push_to_server.sh
+local-docker-compose.yml

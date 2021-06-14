@@ -7,13 +7,15 @@
     <title>Kovol language tools</title>
     <meta name="description" content="Simple scripts to process Kovol language data.">
     <meta name="author" content="Steve Stanley">
-    <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="{{ url_for('static',filename='bootstrap/css/bootstrap.min.css') }}" type="text/css">
 </head>
 
 <body>
     {% block content %}
     {% endblock %}
-    <!-- <script src="js/scripts.js"></script> -->
+    <script src="{{ url_for('static',filename='jquery/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>
 </body>
 
 </html>

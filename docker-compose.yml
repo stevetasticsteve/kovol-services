@@ -1,0 +1,12 @@
+version: "3"
+services:
+    app:
+        build: ./
+        container_name: kovol-services
+        image: stevetasticsteve/kovol-services:arm
+        ports:
+            - 3000:3000
+        volumes:
+            # for mounting bootstrap
+            - /html/static:/app/static/:ro
+        
