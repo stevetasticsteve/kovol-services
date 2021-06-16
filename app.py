@@ -3,6 +3,7 @@ from flask import render_template
 
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, TextAreaField, TextField
+from wtforms.fields.core import Label
 from wtforms.validators import DataRequired
 
 from phonemics import kovol_phonemics
@@ -20,11 +21,12 @@ def index():
 @app.route("/phonemics", methods=['GET', 'POST'])
 def phonemics():
     data = None
+    errors = None
     form = PhonemicsForm()
     if form.validate_on_submit():
         data = form.phonemics.data
-        data = kovol_phonemics.phonetics_to_orthography(data)
-    return render_template('phonemics.html', form=form, data=data)
+        data, errors = kovol_phonemics.phonetics_to_orthography(data, hard_fail=False)
+    return render_template('phonemics.html', form=form, data=data, errors=errors)
 
 
 @app.route("/verb-prediction", methods=['GET', 'POST'])

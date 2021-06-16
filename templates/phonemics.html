@@ -2,19 +2,36 @@
 
 {% block content %}
 
-<h1>Phonemics page</h1>
+{% if errors %}
+<div class="alert alert-warning" role="alert">
+    Check your data, there are things the script isn't expecting.
+</div>
+{% endif %}
+
+<h1 class="pt-4">Phonemics page</h1>
 
 <form method="POST">
     {{ form.csrf_token }}
     <div class="form-group">
         {{ form.phonemics.label }} {{ form.phonemics(size=50, class_="form-control") }}
-        <input type="submit" value="Go" class="btn btn-primary py-2">
+        <br>
+        <input type="submit" value="Go" class="btn btn-primary pt-2">
     </div>
 </form>
 
-{% if verb %}
-    <h3>Orthographic text:</h3>
+{% if data %}
+    <h3 class="pt-3">Orthographic text:</h3>
     <p>{{data}}</p>
+{% endif %}
+
+{% if errors %}
+    <h3 class="pt-3">Errors:</h3>
+    <p>The phonemic converter is intentionally very picky about what data it accepts. Only phonetic characters defined in the phonemic write up are accepted.
+        Punctuation is not allowed also (including new lines). The conversion went ahead anyway, but be aware of the following unexpected items in the data you gave
+        that may cause the result to be inaccurate: </p>
+    {% for e in errors %}
+        <li>{{ e }}</li>
+    {% endfor %}
 {% endif %}
 
 {% endblock %}  
