@@ -4,4 +4,19 @@
 
 <h1>Verb prediction page</h1>
 
+<form method="POST">
+    {{ form.csrf_token }}
+    <div class="form-group">
+        {{ form.first_remote_past.label }} {{ form.first_remote_past(class_="form-control") }}
+        {{ form.first_recent_past.label }} {{ form.first_recent_past(class_="form-control") }}
+        <input type="submit" value="Go" class="btn btn-primary py-2">
+    </div>
+</form>
+
+{% if verb %}
+{{verb}}
+<h3>Predicted verb:</h3>
+{% include 'paradigm.html' %}
+{% endif %}
+
 {% endblock %}

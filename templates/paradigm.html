@@ -1,0 +1,64 @@
+<div class="entry">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Remote past</th>
+                <th scope="col">Recent past</th>
+                <th scope="col">Future</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">1s</th>
+                <td>{{ verb.remote_past_1s }}</td>
+                <td>{{ verb.recent_past_1s }}</td>
+                <td>{{ verb.future_1s }}</td>
+            </tr>
+            <tr>
+                <th scope="row">2s</th>
+                <td>{{ verb.remote_past_2s }}</td>
+                <td>{{ verb.recent_past_2s }}</td>
+                <td>{{ verb.future_2s }}</td>
+            </tr>
+            <tr>
+                <th scope="row">3s</th>
+                <td>{{ verb.remote_past_3s }}</td>
+                <td>{{ verb.recent_past_3s }}</td>
+                <td>{{ verb.future_3s }}</td>
+            </tr>
+            <tr>
+                <th scope="row">1p</th>
+                <td>{{ verb.remote_past_1p }}</td>
+                <td>{{ verb.recent_past_1p }}</td>
+                <td>{{ verb.future_1p }}</td>
+            </tr>
+            <tr>
+                <th scope="row">2p</th>
+                <td>{{ verb.remote_past_2p }}</td>
+                <td>{{ verb.recent_past_2p }}</td>
+                <td>{{ verb.future_2p }}</td>
+            </tr>
+            <tr>
+                <th scope="row">3p</th>
+                <td>{{ verb.remote_past_3p }}</td>
+                <td>{{ verb.recent_past_3p }}</td>
+                <td>{{ verb.future_3p }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="col-sm-2">
+            <strong>Imperative forms:</strong>
+            <ul>2s: {{ verb.singular_imperative }}</ul>
+            <ul>2p: {{ verb.plural_imperative }}</ul>
+        </div>
+        {% if verb.short %}
+        <div class="col-sm-2">
+            <strong>Short form:</strong>
+            <ul>{{verb.short}}</ul>
+        </div>
+        {% endif %}
+    </div>
+    <br>
+</div>

@@ -9,4 +9,6 @@ services:
         volumes:
             # for mounting bootstrap
             - /html/static:/app/static/:ro
+            # mount code for dev
+            - ./templates/:/app/templates:ro
         

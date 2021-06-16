@@ -3,13 +3,19 @@
 {% block content %}
 
 <h1>Index page</h1>
-<ul>
-    <li>
-        <a href="{{url_for('phonemics') }}">Phonemics</a>
-    </li>
-    <li>
-        <a href="{{url_for('verb_prediction') }}">Verb prediction</a>
-    </li>
-</ul>
 
+<div class="list-group">
+    <a href="{{url_for('phonemics') }}" class="list-group-item list-group-item-action active" aria-current="true">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Phonetic converter</h5>
+        </div>
+        <p class="mb-1">Convert phonetics to orthography.</p>
+    </a>
+    <a href="{{url_for('verb_prediction') }}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Verb prediction</h5>
+        </div>
+        <p class="mb-1">Predict a full paradigm for a verb from the first person singular recent and remote past.</p>
+    </a>
+</div>
 {% endblock %}
