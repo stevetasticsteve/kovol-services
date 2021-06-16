@@ -119,13 +119,15 @@ class PredictedKovolVerb(KovolVerb):
 
         self.root = self.predict_root()
         self.predict_verb()
-        
+
     def __str__(self):
-        return "Predicted verb for {rp}, {p}".format(rp=self.remote_past_1s, p=self.recent_past_1s)
+        return "Predicted verb for {rp}, {p}".format(
+            rp=self.remote_past_1s, p=self.recent_past_1s
+        )
 
     def __repr__(self):
         return self.__str__()
-        
+
     def predict_root(self):
         remote_past_tense = self.remote_past_1s[0:-2]  # strip -om
         past_tns = self.recent_past_1s[0:-3]  # strip -gom
@@ -221,7 +223,7 @@ class PredictedKovolVerb(KovolVerb):
             past_tense = [root + sfx for sfx in suffixes]
             past_tense[3] = root[:-1] + suffixes[3]
 
-        self.recent_past_1s = past_tense[0]
+        # No need to predict 1s, user gave it to class
         self.recent_past_2s = past_tense[1]
         self.recent_past_3s = past_tense[2]
         self.recent_past_1p = past_tense[3]
@@ -241,7 +243,7 @@ class PredictedKovolVerb(KovolVerb):
         else:
             remote_past = [self.root + sfx for sfx in suffixes]
 
-        self.remote_past_1s = remote_past[0]
+        # No need to predict 1s, user gave it to class
         self.remote_past_2s = remote_past[1]
         self.remote_past_3s = remote_past[2]
         self.remote_past_1p = remote_past[3]
