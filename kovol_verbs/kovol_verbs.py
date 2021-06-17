@@ -267,5 +267,8 @@ class PredictedKovolVerb(KovolVerb):
         self.singular_imperative = imperatives[0]
         self.plural_imperative = imperatives[1]
 
-    def compare_to_kovol_verb(self, kovol_verb):
-        pass
+    def print_with_kovol_verb(self, kovol_verb):
+        print("Actual verb:")
+        kovol_verb.print_paradigm()
+        print("\nPredicted verb:")
+        self.print_paradigm()
