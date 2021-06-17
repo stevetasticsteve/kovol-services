@@ -88,8 +88,3 @@ def csv_data_to_verb_object(verb_data: list) -> list:
         verbs.append(v)
 
     return verbs
-
-
-data = get_data_from_csv()
-for d in data:
-    d.print_paradigm()
