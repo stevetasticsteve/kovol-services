@@ -1,3 +1,5 @@
+# This file contains the KovolVerb and PredictedKovolVerb classes
+
 from tabulate import tabulate
 
 
@@ -65,10 +67,10 @@ class KovolVerb:
         self.short = ""
 
     def __str__(self):
-        return "{kovol}, {eng}".format(kovol=self.kovol, eng=self.english)
+        return "Kovol verb: {kovol}, \"{eng}\"".format(kovol=self.kovol, eng=self.english)
 
     def __repr__(self):
-        return "Kovol Verb: {v}".format(v=self.kovol)
+        return self.__str__()
 
     def print_paradigm(self):
         table = [
@@ -98,7 +100,9 @@ class KovolVerb:
             "Future tense",
             "Imperative",
         ]
-        print(tabulate(table, headers=headers))
+        print("\n {sing}, \"{eng}\"".format(sing=self.future_1s, eng=self.english))
+        print(tabulate(table, headers=headers, tablefmt="rst"))
+        print("Short form: {short}".format(short=self.short))
 
 
 class PredictedKovolVerb(KovolVerb):
@@ -262,3 +266,6 @@ class PredictedKovolVerb(KovolVerb):
 
         self.singular_imperative = imperatives[0]
         self.plural_imperative = imperatives[1]
+
+    def compare_to_kovol_verb(self, kovol_verb):
+        pass
