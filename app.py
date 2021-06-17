@@ -7,7 +7,7 @@ from wtforms.fields.core import Label
 from wtforms.validators import DataRequired
 
 from phonemics import kovol_phonemics
-from kovol_verbs import PredictedKovolVerb
+from kovol_verbs.kovol_verbs import PredictedKovolVerb
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'password'
