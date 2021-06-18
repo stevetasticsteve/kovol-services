@@ -1,5 +1,6 @@
 # This file contains the KovolVerb and PredictedKovolVerb classes
 
+import kovol_verbs
 from tabulate import tabulate
 
 
@@ -18,14 +19,6 @@ class KovolVerb:
         self.remote_past_1p = ""
         self.remote_past_2p = ""
         self.remote_past_3p = ""
-        self.remote_past_tense = [
-            self.remote_past_1s,
-            self.remote_past_2s,
-            self.remote_past_3s,
-            self.remote_past_1p,
-            self.remote_past_2p,
-            self.remote_past_3p,
-        ]
 
         # Recent past tense
         self.recent_past_1s = ""
@@ -34,14 +27,6 @@ class KovolVerb:
         self.recent_past_1p = ""
         self.recent_past_2p = ""
         self.recent_past_3p = ""
-        self.recent_past_tense = [
-            self.recent_past_1s,
-            self.recent_past_2s,
-            self.recent_past_3s,
-            self.recent_past_1p,
-            self.recent_past_2p,
-            self.recent_past_3p,
-        ]
 
         # Future tense
         self.future_1s = future1s
@@ -50,14 +35,6 @@ class KovolVerb:
         self.future_1p = ""
         self.future_2p = ""
         self.future_3p = ""
-        self.future_tense = [
-            self.future_1s,
-            self.future_2s,
-            self.future_3s,
-            self.future_1p,
-            self.future_2p,
-            self.future_3p,
-        ]
 
         # Imperative forms
         self.singular_imperative = ""
@@ -67,12 +44,59 @@ class KovolVerb:
         self.short = ""
 
     def __str__(self):
-        return "Kovol verb: {kovol}, \"{eng}\"".format(kovol=self.kovol, eng=self.english)
+        return 'Kovol verb: {kovol}, "{eng}"'.format(kovol=self.kovol, eng=self.english)
 
     def __repr__(self):
         return self.__str__()
 
+    # Methods to call several attributes together in groups
+    def get_remote_past_tense(self):
+        remote_past_tense = (
+            self.remote_past_1s,
+            self.remote_past_2s,
+            self.remote_past_3s,
+            self.remote_past_1p,
+            self.remote_past_2p,
+            self.remote_past_3p,
+        )
+        return remote_past_tense
+
+    def get_recent_past_tense(self):
+        recent_past_tense = (
+            self.recent_past_1s,
+            self.recent_past_2s,
+            self.recent_past_3s,
+            self.recent_past_1p,
+            self.recent_past_2p,
+            self.recent_past_3p,
+        )
+        return recent_past_tense
+
+    def get_future_tense(self):
+        future_tense = (
+            self.future_1s,
+            self.future_2s,
+            self.future_3s,
+            self.future_1p,
+            self.future_2p,
+            self.future_3p,
+        )
+        return future_tense
+
+    def get_imperatives(self):
+        return (self.singular_imperative, self.plural_imperative)
+
+    def get_all_conjugations(self):
+        """Return a list of all conjugations for easily comparing verbs."""
+        return (
+            self.get_remote_past_tense()
+            + self.get_recent_past_tense()
+            + self.get_remote_past_tense()
+            + self.get_imperatives()
+        )
+
     def print_paradigm(self):
+        """Use tabulate to print a nice paradigm table to the terminal."""
         table = [
             ["1s", self.remote_past_1s, self.recent_past_1s, self.future_1s, ""],
             [
@@ -100,14 +124,14 @@ class KovolVerb:
             "Future tense",
             "Imperative",
         ]
-        print("\n {sing}, \"{eng}\"".format(sing=self.future_1s, eng=self.english))
+        print('\n {sing}, "{eng}"'.format(sing=self.future_1s, eng=self.english))
         print(tabulate(table, headers=headers, tablefmt="rst"))
         print("Short form: {short}".format(short=self.short))
 
 
 class PredictedKovolVerb(KovolVerb):
-    def __init__(self, remote_past_1s, recent_past_1s):
-        super().__init__(future1s="", english="")
+    def __init__(self, remote_past_1s, recent_past_1s, english=""):
+        super().__init__(future1s="", english=english)
         self.remote_past_1s = remote_past_1s
         self.recent_past_1s = recent_past_1s
         self.vowels = [
@@ -157,10 +181,14 @@ class PredictedKovolVerb(KovolVerb):
         return v
 
     def predict_verb(self):
-        self.predict_future_tense()
-        self.predict_recent_past_tense()
-        self.predict_remote_past()
-        self.predict_imperative()
+        try:
+            self.predict_future_tense()
+            self.predict_recent_past_tense()
+            self.predict_remote_past()
+            self.predict_imperative()
+        except IndexError:
+            print(f"Index error, {self}")
+            # raise IndexError(f"failure on {self}. {self.future_1s}")
 
     def predict_future_tense(self):
         # Figure out suffixes to use
@@ -272,3 +300,37 @@ class PredictedKovolVerb(KovolVerb):
         kovol_verb.print_paradigm()
         print("\nPredicted verb:")
         self.print_paradigm()
+
+    def get_prediction_errors(self, kovol_verb):
+        """Compare predicted Kovol verb to the actual one, returning a dict of differences. The key for the dict
+        is the tense and actor (as a string) and the value is the tuple (actual data, predicted data)"""
+        diff = {}
+        order = [
+            "remote_past_1s",
+            "remote_past_2s",
+            "remote_past_3s",
+            "remote_past_1p",
+            "remote_past_2p",
+            "remote_past_3p",
+            "recent_past_1s",
+            "recent_past_2s",
+            "recent_past_3s",
+            "recent_past_1p",
+            "recent_past_2p",
+            "recent_past_3p",
+            "future_1s",
+            "future_2s",
+            "future_3s",
+            "future_1p",
+            "future_2p",
+            "future_3p",
+            "singular_imperative",
+            "plural_imperative",
+        ]
+        predicted = self.get_all_conjugations()
+        actual = kovol_verb.get_all_conjugations()
+        for o, p, a in zip(order, predicted, actual):
+            if a != p:
+                diff[o] = (a, p)
+
+        return diff
