@@ -1,7 +1,7 @@
 # This file contains code for pulling elicited verb data from various sources
 
 import csv
-from kovol_verbs import KovolVerb
+from kovol_verbs.kovol_verbs import KovolVerb
 
 
 def get_data_from_csv(

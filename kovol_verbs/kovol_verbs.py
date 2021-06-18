@@ -147,6 +147,7 @@ class PredictedKovolVerb(KovolVerb):
 
         self.root = self.predict_root()
         self.predict_verb()
+        self.errors = []
 
     def __str__(self):
         return "Predicted verb for {rp}, {p}".format(
@@ -332,5 +333,5 @@ class PredictedKovolVerb(KovolVerb):
         for o, p, a in zip(order, predicted, actual):
             if a != p:
                 diff[o] = (a, p)
-
-        return diff
+        self.errors = diff
+        return self.errors

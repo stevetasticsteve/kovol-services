@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="pt-3">Batch prediction</h1>
+
+{% for verb in verbs %}
+{% include 'verb_prediction/paradigm.html' %}
+{% endfor %}
+{% endblock %}

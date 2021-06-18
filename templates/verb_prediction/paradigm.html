@@ -30,7 +30,7 @@
             <tr>
                 <th scope="row">1p</th>
                 <td>{{ verb.remote_past_1p }}</td>
-                <td>{{ verb.recent_past_1p }}</td>
+                <td {% if 'recent_past_1p' in verb.errors %}style="color: red;"{% endif %}>{{ verb.recent_past_1p }}</td>
                 <td>{{ verb.future_1p }}</td>
             </tr>
             <tr>

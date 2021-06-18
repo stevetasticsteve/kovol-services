@@ -3,11 +3,11 @@ from flask import render_template
 
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, TextAreaField, TextField
-from wtforms.fields.core import Label
 from wtforms.validators import DataRequired
 
 from phonemics import kovol_phonemics
 from kovol_verbs.kovol_verbs import PredictedKovolVerb
+from kovol_verbs import get_verb_data
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'password'
@@ -37,7 +37,17 @@ def verb_prediction():
         first_remote_past = form.first_remote_past.data
         first_recent_past = form.first_recent_past.data
         verb = PredictedKovolVerb(first_remote_past, first_recent_past)
-    return render_template('verb_prediction.html', form=form, verb=verb)
+    return render_template('verb_prediction/verb_prediction.html', form=form, verb=verb)
+
+@app.route("/verb-prediciton/batch-compare")
+def batch_prediction_comparison():
+    verbs = get_verb_data.get_data_from_csv()
+    predicted_verbs = []
+    for v in verbs:
+        pv = PredictedKovolVerb(v.remote_past_1s, v.recent_past_1s, english=v.english)
+        pv.get_prediction_errors(v)
+        predicted_verbs.append(pv)
+    return render_template('verb_prediction/prediction-comparison.html', verbs=predicted_verbs)
 
 
 class PhonemicsForm(FlaskForm):
