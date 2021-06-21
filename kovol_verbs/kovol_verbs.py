@@ -1,6 +1,5 @@
 # This file contains the KovolVerb and PredictedKovolVerb classes
 
-import kovol_verbs
 from tabulate import tabulate
 
 
@@ -11,9 +10,8 @@ class KovolVerb:
         self.english = english
         self.tpi = ""  # Tok pisin
         self.author = ""  # Who entered the data
-        self.errors = (
-            []
-        )  # used for PredictedVerb subclass, here to maintian template compaitibility
+        self.errors = []  # used for PredictedVerb subclass,
+        # defined here to maintain template compatibility
 
         # Remote past tense
         self.remote_past_1s = ""
@@ -47,12 +45,16 @@ class KovolVerb:
         self.short = ""
 
     def __str__(self):
-        return 'Kovol verb: {kovol}, "{eng}"'.format(kovol=self.kovol, eng=self.english)
+        string = self.get_string_repr()
+        return f"Kovol verb: {string['future_1s']}, \"{string['english']}\""
 
     def __repr__(self):
         return self.__str__()
 
     # Methods to call several attributes together in groups
+    def get_string_repr(self):
+        return {"future_1s": self.future_1s, "english": self.english}
+
     def get_remote_past_tense(self):
         remote_past_tense = (
             self.remote_past_1s,
@@ -94,7 +96,7 @@ class KovolVerb:
         return (
             self.get_remote_past_tense()
             + self.get_recent_past_tense()
-            + self.get_remote_past_tense()
+            + self.get_future_tense()
             + self.get_imperatives()
         )
 
@@ -152,9 +154,8 @@ class PredictedKovolVerb(KovolVerb):
         self.predict_verb()
 
     def __str__(self):
-        return "Predicted verb for {rp}, {p}".format(
-            rp=self.remote_past_1s, p=self.recent_past_1s
-        )
+        string = self.get_string_repr()
+        return f"Predicted Kovol verb: {string['future_1s']}, \"{string['english']}\""
 
     def __repr__(self):
         return self.__str__()
@@ -184,14 +185,10 @@ class PredictedKovolVerb(KovolVerb):
         return v
 
     def predict_verb(self):
-        try:
-            self.predict_future_tense()
-            self.predict_recent_past_tense()
-            self.predict_remote_past()
-            self.predict_imperative()
-        except IndexError:
-            print(f"Index error, {self}")
-            # raise IndexError(f"failure on {self}. {self.future_1s}")
+        self.predict_future_tense()
+        self.predict_recent_past_tense()
+        self.predict_remote_past()
+        self.predict_imperative()
 
     def predict_future_tense(self):
         # Figure out suffixes to use

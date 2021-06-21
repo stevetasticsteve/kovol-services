@@ -133,3 +133,4 @@ push_to_server.sh
 kovol_verbs/elicited_verbs.csv
 jquery
 bootstrap
+compare_predictions.py
