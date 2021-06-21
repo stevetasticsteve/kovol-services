@@ -10,15 +10,15 @@ from kovol_verbs.kovol_verbs import PredictedKovolVerb
 from kovol_verbs import get_verb_data
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'password'
+app.config["SECRET_KEY"] = "password"
 
 
 @app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-@app.route("/phonemics", methods=['GET', 'POST'])
+@app.route("/phonemics", methods=["GET", "POST"])
 def phonemics():
     data = None
     errors = None
@@ -26,10 +26,10 @@ def phonemics():
     if form.validate_on_submit():
         data = form.phonemics.data
         data, errors = kovol_phonemics.phonetics_to_orthography(data, hard_fail=False)
-    return render_template('phonemics.html', form=form, data=data, errors=errors)
+    return render_template("phonemics.html", form=form, data=data, errors=errors)
 
 
-@app.route("/verb-prediction", methods=['GET', 'POST'])
+@app.route("/verb-prediction", methods=["GET", "POST"])
 def verb_prediction():
     verb = None
     form = VerbPredictionForm()
@@ -37,17 +37,28 @@ def verb_prediction():
         first_remote_past = form.first_remote_past.data
         first_recent_past = form.first_recent_past.data
         verb = PredictedKovolVerb(first_remote_past, first_recent_past)
-    return render_template('verb_prediction/verb_prediction.html', form=form, verb=verb)
+    return render_template("verb_prediction/verb_prediction.html", form=form, verb=verb)
+
 
 @app.route("/verb-prediciton/batch-compare")
 def batch_prediction_comparison():
     verbs = get_verb_data.get_data_from_csv()
-    predicted_verbs = []
+    incorrectly_predicted_verbs = []
+    correctly_predicted_verbs = []
     for v in verbs:
         pv = PredictedKovolVerb(v.remote_past_1s, v.recent_past_1s, english=v.english)
         pv.get_prediction_errors(v)
-        predicted_verbs.append(pv)
-    return render_template('verb_prediction/prediction-comparison.html', verbs=predicted_verbs)
+        if pv.errors:
+            incorrectly_predicted_verbs.append((pv, v))
+        else:
+            correctly_predicted_verbs.append(v)
+    accuracy = (len(correctly_predicted_verbs), len(incorrectly_predicted_verbs))
+    return render_template(
+        "verb_prediction/prediction-comparison.html",
+        incorrectly_predicted_verbs=incorrectly_predicted_verbs,
+        correctly_predicted_verbs=correctly_predicted_verbs,
+        accuracy=accuracy,
+    )
 
 
 class PhonemicsForm(FlaskForm):

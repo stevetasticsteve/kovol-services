@@ -86,5 +86,5 @@ def csv_data_to_verb_object(verb_data: list) -> list:
             elif t["mode"].lower() == "short":
                 v.short = t["kov"]
         verbs.append(v)
-
+    verbs = sorted(verbs, key=lambda x: x.future_1s)
     return verbs

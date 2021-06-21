@@ -2,9 +2,48 @@
 
 {% block content %}
 
-<h1 class="pt-3">Batch prediction</h1>
+<h1 class="py-3">Batch prediction</h1>
 
-{% for verb in verbs %}
-{% include 'verb_prediction/paradigm.html' %}
-{% endfor %}
+
+<p>
+    <a class="btn btn-success" data-toggle="collapse" href="#correct_collapse" role="button" aria-expanded="false"
+        aria-controls="correct_collapse">
+        Correctly predicted {{ accuracy[0] }}/{{ accuracy[1] }}
+    </a>
+</p>
+<div class="collapse" id="correct_collapse">
+    {% for verb in correctly_predicted_verbs %}
+    <div class="card card-body">
+        <h5> {{verb.future_1s}}, "{{ verb.english }}" </h5>
+        {% include 'verb_prediction/paradigm.html' %}
+    </div>
+    {% endfor %}
+</div>
+<hr>
+<p>
+    <a class="btn btn-danger" data-toggle="collapse" href="#incorrect_collapse" role="button" aria-expanded="false"
+        aria-controls="incorrect_collapse">
+        Incorrectly predicted {{ accuracy [1] - accuracy[0] }}/{{ accuracy[1] }}
+    </a>
+</p>
+<div class="collapse show" id="incorrect_collapse">
+
+    {% for verb_tuple in incorrectly_predicted_verbs %}
+    <h3>{{verb_tuple[1].future_1s}}, "{{ verb_tuple[1].english }}"</h3>
+
+    <div class="row">
+        <div class="col-md-6">
+            {% set verb = verb_tuple[0] %}
+            <h5>Predicted</h5>
+            {% include 'verb_prediction/paradigm.html' %}
+        </div>
+        <div class="col-md-6">
+            {% set verb = verb_tuple[1] %}
+            <h5>Actual</h5>
+            {% include 'verb_prediction/paradigm.html' %}
+        </div>
+    </div>
+    <hr>
+    {% endfor %}
+</div>
 {% endblock %}

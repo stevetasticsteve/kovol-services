@@ -11,6 +11,9 @@ class KovolVerb:
         self.english = english
         self.tpi = ""  # Tok pisin
         self.author = ""  # Who entered the data
+        self.errors = (
+            []
+        )  # used for PredictedVerb subclass, here to maintian template compaitibility
 
         # Remote past tense
         self.remote_past_1s = ""
@@ -147,7 +150,6 @@ class PredictedKovolVerb(KovolVerb):
 
         self.root = self.predict_root()
         self.predict_verb()
-        self.errors = []
 
     def __str__(self):
         return "Predicted verb for {rp}, {p}".format(
