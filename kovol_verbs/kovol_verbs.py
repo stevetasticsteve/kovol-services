@@ -330,6 +330,9 @@ class PredictedKovolVerb(KovolVerb):
         predicted = self.get_all_conjugations()
         actual = kovol_verb.get_all_conjugations()
         for o, p, a in zip(order, predicted, actual):
+            if o == "future_2s" or o == "future_2p":
+                if a.endswith(" ig"):
+                    a = a[:-3] # strip ig off of the comparison
             if a != p:
                 diff[o] = (a, p)
         self.errors = diff

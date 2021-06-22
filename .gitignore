@@ -134,3 +134,5 @@ kovol_verbs/elicited_verbs.csv
 jquery
 bootstrap
 compare_predictions.py
+kovol_verbs/analysis.ods
+kovol_verbs/.~lock.analysis.ods#

@@ -53,12 +53,18 @@
             <ul {% if 'singular_imperative' in verb.errors %}style="color: red;"{% endif %}>2s: {{ verb.singular_imperative }}</ul>
             <ul {% if 'plural_imperative' in verb.errors %}style="color: red;"{% endif %}>2p: {{ verb.plural_imperative }}</ul>
         </div>
-        {% if verb.short %}
+        
         <div class="col-sm-3">
+            {% if verb.short %}
             <strong>Short form:</strong>
             <ul>{{verb.short}}</ul>
+            {% endif %}
+            {% if verb.root %}
+            <strong>Pedicted root:</strong>
+            <ul>{{verb.root}}</ul>
+            {% endif %}
         </div>
-        {% endif %}
+        
     </div>
     <br>
 </div>
