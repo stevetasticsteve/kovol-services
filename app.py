@@ -5,9 +5,9 @@ from flask_wtf import FlaskForm
 from wtforms import SubmitField, TextAreaField, TextField
 from wtforms.validators import DataRequired
 
-from phonemics import kovol_phonemics
-from kovol_verbs.kovol_verbs import PredictedKovolVerb
-from kovol_verbs import get_verb_data
+from kovol_language_tools.phonemics import phonetics_to_orthography
+from kovol_language_tools.kovol_verbs import PredictedKovolVerb
+from kovol_language_tools.get_verb_data import get_data_from_csv
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "password"
@@ -25,7 +25,7 @@ def phonemics():
     form = PhonemicsForm()
     if form.validate_on_submit():
         data = form.phonemics.data
-        data, errors = kovol_phonemics.phonetics_to_orthography(data, hard_fail=False)
+        data, errors = phonetics_to_orthography(data, hard_fail=False)
     return render_template("phonemics.html", form=form, data=data, errors=errors)
 
 
@@ -42,7 +42,7 @@ def verb_prediction():
 
 @app.route("/verb-prediciton/batch-compare")
 def batch_prediction_comparison():
-    verbs = get_verb_data.get_data_from_csv()
+    verbs = get_data_from_csv()
     incorrectly_predicted_verbs = []
     correctly_predicted_verbs = []
     for v in verbs:
