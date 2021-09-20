@@ -1,13 +1,21 @@
 from flask import Flask
+from flask import request
 from flask import render_template
 
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, TextAreaField, TextField
 from wtforms.validators import DataRequired
 
+local_package = True
+if local_package:
+    import sys
+    path_root = '/home/steve/Documents/Computing/Python_projects/python_CLA/kovol-language-tools'
+    sys.path.append(path_root)
+
 from kovol_language_tools.phonemics import phonetics_to_orthography
-from kovol_language_tools.kovol_verbs import PredictedKovolVerb
-from kovol_language_tools.get_verb_data import get_data_from_csv
+from kovol_language_tools.verbs import PredictedKovolVerb, get_data_from_csv
+
+
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "password"
@@ -42,16 +50,22 @@ def verb_prediction():
 
 @app.route("/verb-prediciton/batch-compare")
 def batch_prediction_comparison():
-    verbs = get_data_from_csv()
+    verbs = get_data_from_csv("kovol_verbs/elicited_verbs.csv")
     incorrectly_predicted_verbs = []
     correctly_predicted_verbs = []
+    # Optional query strings can be passed
+    root_ending_filter = request.args.get('ending')
+
     for v in verbs:
         pv = PredictedKovolVerb(v.remote_past_1s, v.recent_past_1s, english=v.english)
         pv.get_prediction_errors(v)
+        if root_ending_filter:
+            if not pv.root.endswith(root_ending_filter):
+                continue
         if pv.errors:
             incorrectly_predicted_verbs.append((pv, v))
         else:
-            correctly_predicted_verbs.append(v)
+            correctly_predicted_verbs.append(pv)
     accuracy = (len(correctly_predicted_verbs), len(incorrectly_predicted_verbs))
     return render_template(
         "verb_prediction/prediction-comparison.html",
