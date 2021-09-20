@@ -130,8 +130,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 push_to_server.sh
-kovol_verbs/elicited_verbs.csv
 jquery
 bootstrap
 compare_predictions.py
-kovol_verbs/.~lock.analysis.ods#
