@@ -6,7 +6,7 @@
 
 
 <p>
-    <a class="btn btn-success" data-toggle="collapse" href="#correct_collapse" role="button" aria-expanded="false"
+    <a class="btn btn-success" data-bs-toggle="collapse" href="#correct_collapse" role="button" aria-expanded="false"
         aria-controls="correct_collapse">
         Correctly predicted {{ accuracy[0] }}/{{ accuracy[1] }}
     </a>
@@ -21,7 +21,7 @@
 </div>
 <hr>
 <p>
-    <a class="btn btn-danger" data-toggle="collapse" href="#incorrect_collapse" role="button" aria-expanded="false"
+    <a class="btn btn-danger" data-bs-toggle="collapse" href="#incorrect_collapse" role="button" aria-expanded="false"
         aria-controls="incorrect_collapse">
         Incorrectly predicted {{ accuracy [1] - accuracy[0] }}/{{ accuracy[1] }}
     </a>
