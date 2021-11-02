@@ -15,7 +15,7 @@
     {% for verb in correctly_predicted_verbs %}
     <div class="card card-body">
         <h5> {{verb.future_1s}}, "{{ verb.english }}" </h5>
-        {% include 'verb_prediction/paradigm.html' %}
+        {% include 'verbs/paradigm.html' %}
     </div>
     {% endfor %}
 </div>
@@ -35,12 +35,12 @@
         <div class="col-md-6">
             {% set verb = verb_tuple[0] %}
             <h5>Predicted</h5>
-            {% include 'verb_prediction/paradigm.html' %}
+            {% include 'verbs/paradigm.html' %}
         </div>
         <div class="col-md-6">
             {% set verb = verb_tuple[1] %}
             <h5>Actual</h5>
-            {% include 'verb_prediction/paradigm.html' %}
+            {% include 'verbs/paradigm.html' %}
         </div>
     </div>
     <hr>

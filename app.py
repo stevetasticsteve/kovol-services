@@ -16,9 +16,9 @@ from kovol_language_tools.phonemics import phonetics_to_orthography
 from kovol_language_tools.verbs import PredictedKovolVerb, get_data_from_csv
 
 
-
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "password"
+app.debug = True
 
 
 @app.route("/")
@@ -37,7 +37,7 @@ def phonemics():
     return render_template("phonemics.html", form=form, data=data, errors=errors)
 
 
-@app.route("/verb-prediction", methods=["GET", "POST"])
+@app.route("/verbs/prediction", methods=["GET", "POST"])
 def verb_prediction():
     verb = None
     form = VerbPredictionForm()
@@ -45,35 +45,59 @@ def verb_prediction():
         first_remote_past = form.first_remote_past.data
         first_recent_past = form.first_recent_past.data
         verb = PredictedKovolVerb(first_remote_past, first_recent_past)
-    return render_template("verb_prediction/verb_prediction.html", form=form, verb=verb)
+    return render_template("verbs/verb_prediction.html", form=form, verb=verb)
+
+@app.route("/verbs")
+def verb_index():
+    return render_template("verbs/verb_index.html")
 
 
-@app.route("/verb-prediciton/batch-compare")
+@app.route("/verbs/batch-predict")
 def batch_prediction_comparison():
     verbs = get_data_from_csv("kovol_verbs/elicited_verbs.csv")
     incorrectly_predicted_verbs = []
     correctly_predicted_verbs = []
-    # Optional query strings can be passed
-    root_ending_filter = request.args.get('ending')
+
+    verbs = filter_verbs(verbs)
 
     for v in verbs:
         pv = PredictedKovolVerb(v.remote_past_1s, v.recent_past_1s, english=v.english)
         pv.get_prediction_errors(v)
-        if root_ending_filter:
-            if not pv.root.endswith(root_ending_filter):
-                continue
         if pv.errors:
             incorrectly_predicted_verbs.append((pv, v))
         else:
             correctly_predicted_verbs.append(pv)
     accuracy = (len(correctly_predicted_verbs), len(incorrectly_predicted_verbs))
     return render_template(
-        "verb_prediction/prediction-comparison.html",
+        "verbs/prediction-comparison.html",
         incorrectly_predicted_verbs=incorrectly_predicted_verbs,
         correctly_predicted_verbs=correctly_predicted_verbs,
         accuracy=accuracy,
     )
 
+@app.route("/verbs/verb-display")
+def display_verbs():
+    verbs = get_data_from_csv("kovol_verbs/elicited_verbs.csv")
+    verbs = filter_verbs(verbs)
+
+    return render_template("verbs/verb_display.html", verbs=verbs)
+
+
+def filter_verbs(verbs):
+    filters = list(request.args)
+    for v in verbs:
+        v.predict_root()
+
+    if "end" in filters:
+        verbs = [v for v in verbs if v.root.endswith(request.args.get("end"))]
+    if "start" in filters:
+        verbs = [v for v in verbs if v.root.startswith(request.args.get("start"))]
+    if "contains" in filters:
+        verbs = [v for v in verbs if request.args.get("contains") in v.root]
+    if "lv" in filters:
+        verbs = [v for v in verbs if request.args.get("lv") in v.verb_vowels()]
+
+    return verbs
 
 class PhonemicsForm(FlaskForm):
     phonemics = TextAreaField("Phonemic text", validators=[DataRequired()])

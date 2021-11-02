@@ -3,7 +3,6 @@
 {% block content %}
 
 <h1 class="pt-3">Verb prediction page</h1>
-<a href="{{url_for('batch_prediction_comparison') }}">Batch predictions</a>
 
 <form class="pt-2" method="POST">
     {{ form.csrf_token }}
@@ -19,7 +18,7 @@
 {% if verb %}
 {{verb}}
 <h3 class="pt-3">Predicted verb:</h3>
-{% include 'verb_prediction/paradigm.html' %}
+{% include 'verbs/paradigm.html' %}
 {% endif %}
 
 {% endblock %}

@@ -5,7 +5,7 @@ Flask-WTF==0.15.1
 gunicorn==20.1.0
 itsdangerous==2.0.1
 Jinja2==3.0.1
-kovol-language-tools==0.0.8
+kovol-language-tools>=0.0.11
 MarkupSafe==2.0.1
 mccabe==0.6.1
 pycodestyle==2.7.0

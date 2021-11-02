@@ -4,18 +4,18 @@
 
 <h1>Index page</h1>
 
-<div class="list-group">
+<div class="list-group m-4">
     <a href="{{url_for('phonemics') }}" class="list-group-item list-group-item-action active" aria-current="true">
         <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">Phonetic converter</h5>
         </div>
         <p class="mb-1">Convert phonetics to orthography.</p>
     </a>
-    <a href="{{url_for('verb_prediction') }}" class="list-group-item list-group-item-action">
+    <a href="{{url_for('verb_index') }}" class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">Verb prediction</h5>
+            <h5 class="mb-1">Verbs</h5>
         </div>
-        <p class="mb-1">Predict a full paradigm for a verb from the first person singular recent and remote past.</p>
+        <p class="mb-1">Predict, display and filter verbs.</p>
     </a>
 </div>
 {% endblock %}
