@@ -66,7 +66,7 @@ def verb_index():
 
 @app.route("/verbs/batch-predict")
 def batch_prediction_comparison():
-    verbs = get_data_from_csv("kovol_verbs/elicited_verbs.csv")
+    verbs = get_csv_data()
     incorrectly_predicted_verbs = []
     correctly_predicted_verbs = []
 
@@ -90,7 +90,7 @@ def batch_prediction_comparison():
 
 @app.route("/verbs/verb-display")
 def display_verbs():
-    verbs = get_data_from_csv("kovol_verbs/elicited_verbs.csv")
+    verbs = get_csv_data()
     verbs = filter_verbs(verbs)
 
     return render_template("verbs/verb_display.html", verbs=verbs)
@@ -111,6 +111,15 @@ def filter_verbs(verbs):
         verbs = [v for v in verbs if request.args.get("lv") in v.verb_vowels()]
 
     return verbs
+
+
+def get_csv_data():
+    try:
+        verbs = get_data_from_csv("kovol_verbs/elicited_verbs.csv")
+    except FileNotFoundError:
+        verbs = get_data_from_csv("kovol_verbs/elicited_verbs_example.csv")
+    finally:
+        return verbs
 
 
 class PhonemicsForm(FlaskForm):
