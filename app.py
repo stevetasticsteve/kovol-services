@@ -6,10 +6,13 @@ from flask_wtf import FlaskForm
 from wtforms import SubmitField, TextAreaField, TextField
 from wtforms.validators import DataRequired
 
-local_package = True
+import click
+
+local_package = False
 if local_package:
     import sys
-    path_root = '/home/steve/Documents/Computing/Python_projects/python_CLA/kovol-language-tools'
+
+    path_root = "/home/steve/Documents/Computing/Python_projects/python_CLA/kovol-language-tools"
     sys.path.append(path_root)
 
 from kovol_language_tools.phonemics import phonetics_to_orthography
@@ -19,6 +22,14 @@ from kovol_language_tools.verbs import PredictedKovolVerb, get_data_from_csv
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "password"
 app.debug = True
+
+
+@click.command()
+@click.option("--rules", default="steve")
+def run_kovol_services(rules):
+    global prediction_rules
+    prediction_rules = rules
+    app.run()
 
 
 @app.route("/")
@@ -46,6 +57,7 @@ def verb_prediction():
         first_recent_past = form.first_recent_past.data
         verb = PredictedKovolVerb(first_remote_past, first_recent_past)
     return render_template("verbs/verb_prediction.html", form=form, verb=verb)
+
 
 @app.route("/verbs")
 def verb_index():
@@ -75,6 +87,7 @@ def batch_prediction_comparison():
         accuracy=accuracy,
     )
 
+
 @app.route("/verbs/verb-display")
 def display_verbs():
     verbs = get_data_from_csv("kovol_verbs/elicited_verbs.csv")
@@ -86,7 +99,7 @@ def display_verbs():
 def filter_verbs(verbs):
     filters = list(request.args)
     for v in verbs:
-        v.predict_root()
+        v.predict_root(rules=prediction_rules)
 
     if "end" in filters:
         verbs = [v for v in verbs if v.root.endswith(request.args.get("end"))]
@@ -98,6 +111,7 @@ def filter_verbs(verbs):
         verbs = [v for v in verbs if request.args.get("lv") in v.verb_vowels()]
 
     return verbs
+
 
 class PhonemicsForm(FlaskForm):
     phonemics = TextAreaField("Phonemic text", validators=[DataRequired()])
@@ -111,5 +125,4 @@ class VerbPredictionForm(FlaskForm):
 
 
 if __name__ == "__main__":
-    # app.run(debug=True, host="0.0.0.0", port=3000)
-    app.run()
+    run_kovol_services()
