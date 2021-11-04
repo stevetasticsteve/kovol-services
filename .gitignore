@@ -133,3 +133,5 @@ push_to_server.sh
 jquery
 bootstrap
 compare_predictions.py
+
+kovol-language-tools/
