@@ -7,13 +7,11 @@ from wtforms import SubmitField, TextAreaField, TextField
 from wtforms.validators import DataRequired
 
 import click
+import sys
+import os
 
-local_package = False
-if local_package:
-    import sys
-
-    path_root = "/home/steve/Documents/Computing/Python_projects/python_CLA/kovol-language-tools"
-    sys.path.append(path_root)
+# favour the local version of kovol-language-tools
+sys.path.insert(0, os.path.join(os.getcwd(), "kovol-language-tools"))
 
 from kovol_language_tools.phonemics import phonetics_to_orthography
 from kovol_language_tools.verbs import PredictedKovolVerb, get_data_from_csv
