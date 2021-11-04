@@ -14,7 +14,7 @@ import os
 sys.path.insert(0, os.path.join(os.getcwd(), "kovol-language-tools"))
 
 from kovol_language_tools.phonemics import phonetics_to_orthography
-from kovol_language_tools.verbs import PredictedKovolVerb, get_data_from_csv
+from kovol_language_tools.verbs import PredictedKovolVerb, HansenPredictedKovolVerb, get_data_from_csv
 
 
 app = Flask(__name__)
@@ -71,7 +71,10 @@ def batch_prediction_comparison():
     verbs = filter_verbs(verbs)
 
     for v in verbs:
-        pv = PredictedKovolVerb(v.remote_past_1s, v.recent_past_1s, english=v.english)
+        if prediction_rules == 'philip':
+            pv = HansenPredictedKovolVerb(v.remote_past_1s, v.recent_past_1s, english=v.english)
+        else:
+            pv = PredictedKovolVerb(v.remote_past_1s, v.recent_past_1s, english=v.english)
         pv.get_prediction_errors(v)
         if pv.errors:
             incorrectly_predicted_verbs.append((pv, v))
