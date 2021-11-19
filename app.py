@@ -77,7 +77,7 @@ def batch_prediction_comparison():
     for v in verbs:
         if prediction_rules == "philip":
             pv = HansenPredictedKovolVerb(
-                v.remote_past_1s, v.recent_past_1s, english=v.english
+                v.remote_past_3p, english=v.english,
             )
         else:
             pv = PredictedKovolVerb(
