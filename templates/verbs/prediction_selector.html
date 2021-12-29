@@ -1,0 +1,12 @@
+
+<form class="pt-2" method="POST">
+    {{ form.csrf_token }}
+    {% for f in form.radio %}
+    <div class="form-check">
+        {{ f(class_="form-check-input") }}
+        {{ f.label }}
+    </div>
+    {% endfor %}
+    <input type="submit" value="Apply" class="btn btn-secondary pt-2 mt-2">
+
+</form>

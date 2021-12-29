@@ -3,12 +3,13 @@ from flask import request
 from flask import render_template
 
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, TextAreaField, TextField
+from wtforms import SubmitField, TextAreaField, TextField, RadioField
 from wtforms.validators import DataRequired
 
 import click
 import sys
 import os
+
 
 # favour the local version of kovol-language-tools
 sys.path.insert(0, os.path.join(os.getcwd(), "kovol-language-tools"))
@@ -66,16 +67,32 @@ def verb_index():
     return render_template("verbs/verb_index.html")
 
 
-@app.route("/verbs/batch-predict")
+@app.route("/verbs/batch-predict", methods=["GET", "POST"])
 def batch_prediction_comparison():
     verbs = get_csv_data()
     incorrectly_predicted_verbs = []
     correctly_predicted_verbs = []
+    form = PredictionSelectionForm()
+
+    # if form.validate():
+    #     print(f"data = {form.radio.data}")
+    #     if form.radio.data == "Stanley":
+    #         pv = PredictedKovolVerb(
+    #                 v.remote_past_1s, v.recent_past_1s, english=v.english
+    #             )
+        
+    # # else:
+    # #     print(form.errors)
+
+    prediction = "Hansen"
+    if form.validate():
+        if form.radio.data == "Stanley":
+            prediction = "Stanley"
 
     verbs = filter_verbs(verbs)
 
     for v in verbs:
-        if prediction_rules == "philip":
+        if prediction == "Hansen":
             pv = HansenPredictedKovolVerb(
                 v.future_3p,
                 english=v.english,
@@ -95,6 +112,7 @@ def batch_prediction_comparison():
         incorrectly_predicted_verbs=incorrectly_predicted_verbs,
         correctly_predicted_verbs=correctly_predicted_verbs,
         accuracy=accuracy,
+        form=form,
     )
 
 
@@ -141,6 +159,13 @@ class VerbPredictionForm(FlaskForm):
     first_remote_past = TextField("1st person remote_past", validators=[DataRequired()])
     first_recent_past = TextField("1st person recent past", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+
+class PredictionSelectionForm(FlaskForm):
+    radio = RadioField("Label", choices=[
+        ("Hansen", "Hansen prediction"), ("Stanley", "Stanley prediction")],
+        default="Hansen")
+
 
 
 if __name__ == "__main__":
