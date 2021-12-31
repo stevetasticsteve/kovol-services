@@ -15,11 +15,9 @@ import os
 sys.path.insert(0, os.path.join(os.getcwd(), "kovol-language-tools"))
 
 from kovol_language_tools.phonemics import phonetics_to_orthography
-from kovol_language_tools.verbs import (
-    PredictedKovolVerb,
-    HansenPredictedKovolVerb,
-    get_data_from_csv,
-)
+from kovol_language_tools.verbs.csv_reader import get_data_from_csv
+from kovol_language_tools.verbs.stanley_predicted_verb import StanleyPredictedVerb
+from kovol_language_tools.verbs.hansen_predicted_verb import HansenPredictedVerb
 
 
 app = Flask(__name__)
@@ -57,12 +55,12 @@ def verb_prediction():
     if stanley_form.stanley_submit.data and stanley_form.validate_on_submit():
         past_1s = stanley_form.first_remote_past.data
         recent_1s = stanley_form.first_recent_past.data
-        verb = PredictedKovolVerb(past_1s, recent_1s)
+        verb = StanleyPredictedVerb(past_1s, recent_1s)
 
     if hansen_form.hansen_submit.data and hansen_form.validate_on_submit():
         future_3p = hansen_form.future_3p.data
-        verb = HansenPredictedKovolVerb(future_3p)
-        
+        verb = HansenPredictedVerb(future_3p)
+
     return render_template(
         "verbs/verb_prediction.html",
         stanley_form=stanley_form,
@@ -92,12 +90,12 @@ def batch_prediction_comparison():
 
     for v in verbs:
         if prediction_rules == "hansen":
-            pv = HansenPredictedKovolVerb(
+            pv = HansenPredictedVerb(
                 v.future_3p,
                 english=v.english,
             )
         else:
-            pv = PredictedKovolVerb(
+            pv = StanleyPredictedVerb(
                 v.remote_past_1s, v.recent_past_1s, english=v.english
             )
         pv.get_prediction_errors(v)
