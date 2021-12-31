@@ -11,8 +11,8 @@
         <tbody>
             <tr>
                 <th scope="row">1s</th>
-                <td>{{ verb.remote_past_1s }}</td>
-                <td>{{ verb.recent_past_1s }}</td>
+                <td {% if 'remote_past_1s' in verb.errors %}style="color: red;"{% endif %}>{{ verb.remote_past_1s }}</td>
+                <td {% if 'recent_past_1s' in verb.errors %}style="color: red;"{% endif %}>{{ verb.recent_past_1s }}</td>
                 <td {% if 'future_1s' in verb.errors %}style="color: red;"{% endif %}>{{ verb.future_1s }}</td>
             </tr>
             <tr>
