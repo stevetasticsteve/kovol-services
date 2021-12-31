@@ -2,23 +2,46 @@
 
 {% block content %}
 
-<h1 class="pt-3">Verb prediction page</h1>
+<h1 class="pt-3">Verb prediction</h1>
 
-<form class="pt-2" method="POST">
-    {{ form.csrf_token }}
-    <div class="form-group">
-        {{ form.first_remote_past.label }} {{ form.first_remote_past(class_="form-control") }}
-        <br>
-        {{ form.first_recent_past.label }} {{ form.first_recent_past(class_="form-control") }}
-        <br>
-        <input type="submit" value="Go" class="btn btn-primary pt-2">
+<div class="container">
+    <div class="row">
+        <div class="col border p-2 m-1">
+            <h3>Predict using Stanley method</h3>
+            <form class="pt-2" method="POST">
+                {{ stanley_form.csrf_token }}
+                <div class="form-group">
+                    {{ stanley_form.first_remote_past.label }} {{ stanley_form.first_remote_past(class_="form-control") }}
+                    <br>
+                    {{ stanley_form.first_recent_past.label }} {{ stanley_form.first_recent_past(class_="form-control") }}
+                    <br>
+                    <!-- <input type="submit" class="btn btn-primary pt-2"> -->
+                    {{ stanley_form.stanley_submit }}
+                    <!-- <input type="submit" name="stanley_submit" value="stanley_submit"> -->
+                </div>
+            </form>
+        </div>
+        <div class="col border p-2 m-1">
+            <h3>Predict using Hansen method</h3>
+            <form class="pt-2" method="POST">
+                {{ hansen_form.csrf_token }}
+                <div class="form-group">
+                    {{ hansen_form.future_3p.label }} {{ hansen_form.future_3p(class_="form-control") }}
+                    <br>
+                    <!-- <input type="submit" class="btn btn-primary pt-2"> -->
+                    <!-- <input type="submit" name="hansen_submit" value="hansen_submit"> -->
+                    {{ hansen_form.hansen_submit }}
+                </div>
+            </form>
+        </div>
     </div>
-</form>
+</div>
 
-{% if verb %}
-{{verb}}
-<h3 class="pt-3">Predicted verb:</h3>
-{% include 'verbs/paradigm.html' %}
-{% endif %}
+<div class="container-fluid">
+    {% if verb %}
+    <br>
+    {% include 'verbs/paradigm.html' %}
+    {% endif %}
 
-{% endblock %}
+    {% endblock %}
+</div>

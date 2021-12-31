@@ -51,12 +51,24 @@ def phonemics():
 @app.route("/verbs/prediction", methods=["GET", "POST"])
 def verb_prediction():
     verb = None
-    form = VerbPredictionForm()
-    if form.validate_on_submit():
-        first_remote_past = form.first_remote_past.data
-        first_recent_past = form.first_recent_past.data
-        verb = PredictedKovolVerb(first_remote_past, first_recent_past)
-    return render_template("verbs/verb_prediction.html", form=form, verb=verb)
+    stanley_form = StanleyVerbPredictionForm()
+    hansen_form = HansenVerbPredictionForm()
+
+    if stanley_form.stanley_submit.data and stanley_form.validate_on_submit():
+        past_1s = stanley_form.first_remote_past.data
+        recent_1s = stanley_form.first_recent_past.data
+        verb = PredictedKovolVerb(past_1s, recent_1s)
+
+    if hansen_form.hansen_submit.data and hansen_form.validate_on_submit():
+        future_3p = hansen_form.future_3p.data
+        verb = HansenPredictedKovolVerb(future_3p)
+        
+    return render_template(
+        "verbs/verb_prediction.html",
+        stanley_form=stanley_form,
+        hansen_form=hansen_form,
+        verb=verb,
+    )
 
 
 @app.route("/verbs")
@@ -149,17 +161,23 @@ class PhonemicsForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
-class VerbPredictionForm(FlaskForm):
-    first_remote_past = TextField("1st person remote_past", validators=[DataRequired()])
-    first_recent_past = TextField("1st person recent past", validators=[DataRequired()])
-    submit = SubmitField("Submit")
+class StanleyVerbPredictionForm(FlaskForm):
+    first_remote_past = TextField("1st person past", validators=[DataRequired()])
+    first_recent_past = TextField("1st person recent", validators=[DataRequired()])
+    stanley_submit = SubmitField("Go")
+
+
+class HansenVerbPredictionForm(FlaskForm):
+    future_3p = TextField("3rd person future", validators=[DataRequired()])
+    hansen_submit = SubmitField("Go")
 
 
 class PredictionSelectionForm(FlaskForm):
-    radio = RadioField("Label", choices=[
-        ("Hansen", "Hansen prediction"), ("Stanley", "Stanley prediction")],
-        default="Hansen")
-
+    radio = RadioField(
+        "Label",
+        choices=[("Hansen", "Hansen prediction"), ("Stanley", "Stanley prediction")],
+        default="Hansen",
+    )
 
 
 if __name__ == "__main__":
