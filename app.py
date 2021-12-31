@@ -28,10 +28,7 @@ app.debug = True
 
 
 @click.command()
-@click.option("--rules", default="steve")
-def run_kovol_services(rules):
-    global prediction_rules
-    prediction_rules = rules
+def run_kovol_services():
     app.run()
 
 
@@ -74,25 +71,15 @@ def batch_prediction_comparison():
     correctly_predicted_verbs = []
     form = PredictionSelectionForm()
 
-    # if form.validate():
-    #     print(f"data = {form.radio.data}")
-    #     if form.radio.data == "Stanley":
-    #         pv = PredictedKovolVerb(
-    #                 v.remote_past_1s, v.recent_past_1s, english=v.english
-    #             )
-        
-    # # else:
-    # #     print(form.errors)
-
-    prediction = "Hansen"
+    prediction_rules = "hansen"
     if form.validate():
         if form.radio.data == "Stanley":
-            prediction = "Stanley"
+            prediction_rules = "stanley"
 
-    verbs = filter_verbs(verbs)
+    verbs = filter_verbs(verbs, prediction_rules)
 
     for v in verbs:
-        if prediction == "Hansen":
+        if prediction_rules == "hansen":
             pv = HansenPredictedKovolVerb(
                 v.future_3p,
                 english=v.english,
@@ -116,18 +103,25 @@ def batch_prediction_comparison():
     )
 
 
-@app.route("/verbs/verb-display")
+@app.route("/verbs/verb-display", methods=["GET", "POST"])
 def display_verbs():
     verbs = get_csv_data()
-    verbs = filter_verbs(verbs)
 
-    return render_template("verbs/verb_display.html", verbs=verbs)
+    form = PredictionSelectionForm()
+    prediction_rules = "hansen"
+
+    if form.validate():
+        if form.radio.data == "Stanley":
+            prediction_rules = "stanley"
+    verbs = filter_verbs(verbs, prediction_rules)
+
+    return render_template("verbs/verb_display.html", verbs=verbs, form=form)
 
 
-def filter_verbs(verbs):
+def filter_verbs(verbs, rules):
     filters = list(request.args)
     for v in verbs:
-        v.predict_root(rules=prediction_rules)
+        v.predict_root(rules=rules)
 
     if "end" in filters:
         verbs = [v for v in verbs if v.root.endswith(request.args.get("end"))]
