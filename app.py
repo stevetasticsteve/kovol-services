@@ -55,14 +55,16 @@ def verb_prediction():
     stanley_form = StanleyVerbPredictionForm()
     hansen_form = HansenVerbPredictionForm()
 
-    if stanley_form.stanley_submit.data and stanley_form.validate_on_submit():
-        past_1s = stanley_form.first_remote_past.data
-        recent_1s = stanley_form.first_recent_past.data
-        verb = StanleyPredictedVerb(past_1s, recent_1s)
+    if request.method == "POST":
 
-    if hansen_form.hansen_submit.data and hansen_form.validate_on_submit():
-        future_3p = hansen_form.future_3p.data
-        verb = HansenPredictedVerb(future_3p)
+        if stanley_form.stanley_submit.data and stanley_form.validate_on_submit():
+            past_1s = stanley_form.first_remote_past.data
+            recent_1s = stanley_form.first_recent_past.data
+            verb = StanleyPredictedVerb(past_1s, recent_1s)
+
+        elif hansen_form.hansen_submit.data and hansen_form.validate_on_submit():
+            future_3p = hansen_form.future_3p.data
+            verb = HansenPredictedVerb(future_3p)
 
     return render_template(
         "verbs/verb_prediction.html",
@@ -95,7 +97,6 @@ def batch_prediction_comparison():
             elif form.radio.data == "Hansen":
                 prediction_rules = "hansen"
 
-    print(f"file = {csv_file}, prediction = {prediction_rules}, request = {request.method}")
     verbs = get_csv_data(csv_file)
     verbs = filter_verbs(verbs, prediction_rules)
 
@@ -116,7 +117,7 @@ def batch_prediction_comparison():
             incorrectly_predicted_verbs.append((pv, v))
         else:
             correctly_predicted_verbs.append(pv)
-    accuracy = (len(correctly_predicted_verbs), len(incorrectly_predicted_verbs))
+    accuracy = (len(verbs), len(correctly_predicted_verbs))
     return render_template(
         "verbs/prediction-comparison.html",
         incorrectly_predicted_verbs=incorrectly_predicted_verbs,
@@ -172,7 +173,6 @@ def get_csv_data(file):
     return verbs
 
 
-
 class PhonemicsForm(FlaskForm):
     phonemics = TextAreaField("Phonemic text", validators=[DataRequired()])
     submit = SubmitField("Submit")
@@ -190,21 +190,24 @@ class HansenVerbPredictionForm(FlaskForm):
 
 
 class PredictionSelectionForm(FlaskForm):
-    csv_selector = SelectField("Select csv:", choices=[("DEFAULT", "default"),], validators=[DataRequired()])
+    csv_selector = SelectField(
+        "Select csv:",
+        choices=[
+            ("DEFAULT", "default"),
+        ],
+        validators=[DataRequired()],
+    )
     radio = RadioField(
         "Label",
         choices=[("Hansen", "Hansen prediction"), ("Stanley", "Stanley prediction")],
         default="Hansen",
         validators=[DataRequired()],
     )
-  
+
     def __init__(self, choices=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if choices:
             self.csv_selector.choices = choices
-
-
-
 
 
 if __name__ == "__main__":
