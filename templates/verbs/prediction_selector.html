@@ -7,6 +7,11 @@
         {{ f.label }}
     </div>
     {% endfor %}
+    <div class="w-25 mt-2">
+        {{ form.csv_selector.label }}
+        {{ form.csv_selector(class_="form-control mt-2") }}
+
+    </div>
     <input type="submit" value="Apply" class="btn btn-secondary pt-2 mt-2">
 
 </form>

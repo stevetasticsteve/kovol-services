@@ -3,7 +3,7 @@ from flask import request
 from flask import render_template
 
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, TextAreaField, TextField, RadioField
+from wtforms import SubmitField, TextAreaField, TextField, RadioField, SelectField
 from wtforms.validators import DataRequired
 
 import click
@@ -23,6 +23,9 @@ from kovol_language_tools.verbs.hansen_predicted_verb import HansenPredictedVerb
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "password"
 app.debug = True
+
+default_prediction = "hansen"
+default_csv = "elicited_verbs.csv"
 
 
 @click.command()
@@ -76,16 +79,24 @@ def verb_index():
 
 @app.route("/verbs/batch-predict", methods=["GET", "POST"])
 def batch_prediction_comparison():
-    verbs = get_csv_data()
     incorrectly_predicted_verbs = []
     correctly_predicted_verbs = []
-    form = PredictionSelectionForm()
+    form = PredictionSelectionForm(choices=os.listdir("kovol_verbs"))
 
-    prediction_rules = "hansen"
-    if form.validate():
-        if form.radio.data == "Stanley":
-            prediction_rules = "stanley"
+    if request.method == "GET":
+        csv_file = default_csv
+        prediction_rules = default_prediction
 
+    elif request.method == "POST":
+        if form.validate_on_submit():
+            csv_file = form.csv_selector.data
+            if form.radio.data == "Stanley":
+                prediction_rules = "stanley"
+            elif form.radio.data == "Hansen":
+                prediction_rules = "hansen"
+
+    print(f"file = {csv_file}, prediction = {prediction_rules}, request = {request.method}")
+    verbs = get_csv_data(csv_file)
     verbs = filter_verbs(verbs, prediction_rules)
 
     for v in verbs:
@@ -94,10 +105,12 @@ def batch_prediction_comparison():
                 v.future_3p,
                 english=v.english,
             )
+            mode = "Hansen"
         else:
             pv = StanleyPredictedVerb(
                 v.remote_past_1s, v.recent_past_1s, english=v.english
             )
+            mode = "Stanley"
         pv.get_prediction_errors(v)
         if pv.errors:
             incorrectly_predicted_verbs.append((pv, v))
@@ -110,19 +123,27 @@ def batch_prediction_comparison():
         correctly_predicted_verbs=correctly_predicted_verbs,
         accuracy=accuracy,
         form=form,
+        mode=mode,
     )
 
 
 @app.route("/verbs/verb-display", methods=["GET", "POST"])
 def display_verbs():
-    verbs = get_csv_data()
+    form = PredictionSelectionForm(choices=os.listdir("kovol_verbs"))
 
-    form = PredictionSelectionForm()
-    prediction_rules = "hansen"
+    if request.method == "GET":
+        csv_file = default_csv
+        prediction_rules = default_prediction
 
-    if form.validate():
-        if form.radio.data == "Stanley":
-            prediction_rules = "stanley"
+    elif request.method == "POST":
+        if form.validate_on_submit():
+            csv_file = form.csv_selector.data
+            if form.radio.data == "Stanley":
+                prediction_rules = "stanley"
+            elif form.radio.data == "Hansen":
+                prediction_rules = "hansen"
+
+    verbs = get_csv_data(csv_file)
     verbs = filter_verbs(verbs, prediction_rules)
 
     return render_template("verbs/verb_display.html", verbs=verbs, form=form)
@@ -145,13 +166,11 @@ def filter_verbs(verbs, rules):
     return verbs
 
 
-def get_csv_data():
-    try:
-        verbs = get_data_from_csv("kovol_verbs/elicited_verbs.csv")
-    except FileNotFoundError:
-        verbs = get_data_from_csv("kovol_verbs/elicited_verbs_example.csv")
-    finally:
-        return verbs
+def get_csv_data(file):
+    file = os.path.join("kovol_verbs", file)
+    verbs = get_data_from_csv(file)
+    return verbs
+
 
 
 class PhonemicsForm(FlaskForm):
@@ -171,11 +190,21 @@ class HansenVerbPredictionForm(FlaskForm):
 
 
 class PredictionSelectionForm(FlaskForm):
+    csv_selector = SelectField("Select csv:", choices=[("DEFAULT", "default"),], validators=[DataRequired()])
     radio = RadioField(
         "Label",
         choices=[("Hansen", "Hansen prediction"), ("Stanley", "Stanley prediction")],
         default="Hansen",
+        validators=[DataRequired()],
     )
+  
+    def __init__(self, choices=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if choices:
+            self.csv_selector.choices = choices
+
+
+
 
 
 if __name__ == "__main__":

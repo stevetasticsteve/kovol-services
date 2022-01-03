@@ -7,6 +7,8 @@
 {% include 'verbs/prediction_selector.html' %}
 {% include 'verbs/filter_explanation.html' %}
 <p>
+<h4>Predicting using {{mode}} algorithm.</h4>
+
     <a class="btn btn-success" data-bs-toggle="collapse" href="#correct_collapse" role="button" aria-expanded="false"
         aria-controls="correct_collapse">
         Correctly predicted {{ accuracy[0] }}/{{ accuracy[1] }}
